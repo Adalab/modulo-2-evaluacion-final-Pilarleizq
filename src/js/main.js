@@ -2,7 +2,7 @@
 
 const inputSearch = document.querySelector('.js-inputSearch');
 const searchButton = document.querySelector('.js-buttonSearch');
-// const resetButton = document.querySelector('.js-buttonReset');
+const logButton = document.querySelector('.js-buttonLog');
 const listCocktails = document.querySelector('.js-ulAll');
 const listFavs = document.querySelector('.js-ulFavs');
 const inputTrash = document.querySelector('.js-trash');
@@ -33,26 +33,33 @@ function fetchCocktails(searchValue){
     .then((data) => {
       listCocktails.innerHTML = '';
       listCocktailsData = data.drinks;
-      console.log(listCocktailsData);
       renderListCocktails(listCocktailsData);
       localStorage.setItem('cocktails',JSON.stringify(listCocktailsData));
     });
+}
+
+function handleLog(ev){
+  ev.preventDefault();
+  for (const fav of listFavsData) {
+    console.log(fav.strDrink);
+  }
 }
 
 function renderListCocktails(listCocktailsData) {
   listCocktails.innerHTML = '';
   for (const cocktail of listCocktailsData) {
     const favCocktail = listFavsData.find(drinks => drinks.idDrink === cocktail.idDrink);
-    console.log(favCocktail);
     if(favCocktail !== undefined){
       listCocktails.innerHTML += `<li class="li selected" >
           <p class="namelist"> ${cocktail.strDrink} </p>
+          <p class="category"> ${cocktail.strCategory} </p>
           <img class="img js-li-cocktails" id=${cocktail.idDrink} src=${cocktail.strDrinkThumb} alt="Foto del cocktail"/>
           </li>
           `;
     } else {
       listCocktails.innerHTML += `<li class="li" >
           <p class="namelist"> ${cocktail.strDrink} </p>
+          <p class="category"> ${cocktail.strCategory} </p>
           <img class="img js-li-cocktails" id=${cocktail.idDrink} src=${cocktail.strDrinkThumb} alt="Foto del cocktail"/>
           </li>
           `;
@@ -89,7 +96,8 @@ function removeFavs (ev){
  
 }
 
-function handleClickButton() {
+function handleClickButton(ev) {
+  ev.prevenDefault();
   fetchCocktails(inputSearch.value);
 }
 
@@ -125,7 +133,6 @@ function addEventToX(){
 }
 
 function handleInput(ev){
-  ev.preventDefault();
   fetchCocktails(inputSearch.value);
 }
 
@@ -137,6 +144,7 @@ function handleInput(ev){
 
 searchButton.addEventListener('click', handleClickButton);
 inputSearch.addEventListener('input', handleInput);
+logButton.addEventListener('click', handleLog);
 // inputTrash.addEventListener('click', handleTrash);
 
 //prevenDefault se suele utilizar con button y etiquetas tipo submit, ya que recargan la página
